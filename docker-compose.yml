@@ -1,0 +1,10 @@
+version: "3"
+services:
+  highload:
+    build:
+      context: .
+#    volumes:
+#      - ./supervisor.conf:/etc/supervisor/conf.d/supervisord.conf
+    ports:
+      - "3306:3306"
+      - "8001:80"
