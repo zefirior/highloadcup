@@ -2,6 +2,14 @@ import sys
 import json
 import pathlib as pl
 
+from mysql.connector import connection
+cnx = connection.MySQLConnection(user='root', password='',
+                                 host='127.0.0.1',
+                                 database='')
+
+
+# def get
+
 
 def is_account_source(file_name):
     return file_name[:9] == "accounts_" and file_name[-5:] == ".json"
@@ -10,7 +18,9 @@ def is_account_source(file_name):
 def read_accounts(path):
     with open(path, "r") as accounts_file:
         objects = json.load(accounts_file)
-        print(objects['accounts'][0])
+        with
+        for acc in objects['accounts']:
+
 
 
 data_dir = pl.Path(sys.argv[1])

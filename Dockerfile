@@ -1,6 +1,6 @@
 FROM python:3.6
 
-WORKDIR /src
+WORKDIR /app
 
 
 ### supervizord
@@ -17,7 +17,8 @@ RUN apt-get install -y mysql-server
 
 ### app
 COPY ./requirements.txt ./requirements.txt
-COPY ./app.py ./app.py
+COPY ./src ./src
+COPY ./db ./db
 
 RUN pip install -U pip && pip install -r requirements.txt
 
