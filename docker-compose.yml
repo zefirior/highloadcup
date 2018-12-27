@@ -3,10 +3,16 @@ services:
   highload:
     build:
       context: .
+      dockerfile: ./docker/hload/Dockerfile
     volumes:
-      - "./supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
-#      - "./db:/src/db"
-#      - "./src:/src/db"
-    ports:
+      - "./hload-entrypoint.sh:/app/hload-entrypoint.sh"
+      - "hload_data:/tmp/data:ro"
+      - "./db:/app/db"
+      - "./src:/app/src"
+    network_mode: host
+#    ports:
 #      - "3306:3306"
-      - "8001:80"
+#      - "8001:80"
+volumes:
+  hload_data:
+    external: true
