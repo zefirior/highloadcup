@@ -5,28 +5,25 @@
 #ifndef CORE_SERVER_H
 #define CORE_SERVER_H
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/un.h>
 #include <string.h>
+#include "Api.h"
 
 using namespace std;
-
-class Api {
-  public:
-    string dispatch(string data);
-};
-
-typedef struct sockaddr_un Address;
 
 class Server {
     string unix_sock_file;
     int listen_sockfd;
-    Address* address;
+    sockaddr_un* address;
     socklen_t addrlen;
   public:
     Server(string unix_sock_file);
     int accept_connection();
     void run(Api* api);
-    string read_massage(int sock);
+    string* read_massage(int sock);
+    bool send_massage(int sock, string message);
 };
-
 
 #endif //CORE_SERVER_H

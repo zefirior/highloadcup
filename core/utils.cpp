@@ -2,10 +2,24 @@
 // Created by liinda on 01.01.19.
 //
 
+#include <iostream>
 #include "utils.h"
 #include "model/Account.h"
 
-void utils::fill_massive(Store *acc_store, int acc_num) {
+int utils::int_from_string(string data){
+  return atoi(data.c_str());
+}
+
+string utils::next_block(string* data, size_t &left, size_t &right){
+  if (right != 0){
+    left = right + 1;
+  }
+  right = data->find(' ', left);
+  return data->substr(left, right - left);
+
+}
+
+/*void utils::fill_massive(Store *acc_store, int acc_num) {
   Like *like_1, *like_2;
   Premium *premium;
   Account *account;
@@ -24,9 +38,9 @@ void utils::fill_massive(Store *acc_store, int acc_num) {
     premium->premium_to = 132523;
 
     account = new Account(
-      123, 23452543, *premium, '2', '3', "89126290012", "wizard.liinda@gmail.com",
+      123, 23452543, premium, '2', '3', "89126290012", "wizard.liinda@gmail.com",
       "liinda", "wizard", "рус", "ekat", like_2
     );
     acc_store->add_item(account);
   }
-}
+}*/

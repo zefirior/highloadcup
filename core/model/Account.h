@@ -26,26 +26,26 @@ class Account {
     char status;
     string phone;
     string email;
-    string fname;
-    string sname;
-    string country;
-    string city;
+    string *fname;
+    string *sname;
+    string *country;
+    string *city;
 
 public:
-    Premium premium;
+    Premium* premium;
     Like *like;
     Account(
             int32_t id,
             int32_t birth,
-            Premium premium,
+            Premium *premium,
             char sex,
             char status,
             string phone,
             string email,
-            string fname,
-            string sname,
-            string country,
-            string city,
+            string *fname,
+            string *sname,
+            string *country,
+            string *city,
             Like *like
     );
     void repr();

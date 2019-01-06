@@ -1,4 +1,7 @@
+#define DEBUG_MODE
+
 #include <iostream>
+#include <map>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +12,7 @@
 
 using namespace std;
 
-#define ACCOUNT_NUMBER 1300
+#define ACCOUNT_NUMBER 30000
 
 int main() {
 
@@ -21,16 +24,24 @@ int main() {
   acc_store.get_item(1000)->repr();*/
 
   /*
+  Store acc_store {ACCOUNT_NUMBER};
+  auto api = Api(acc_store);
   unlink("/tmp/server-socket.sock");
   std::cout << "Create server" << std::endl;
   Server server = Server("/tmp/server-socket.sock");
   std::cout << "run server" << std::endl;
-  server.run(new Api());
+  server.run(&api);
    */
 
-  string string1 = "123";
-
-  std::cout << string1.compare("1252343") << std::endl;
+//  /*
+  string data = "AADD fn asdgkajdew i 123 b 2345345 p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city";
+  Store acc_store {ACCOUNT_NUMBER};
+  auto api = Api(&acc_store);
+  for (int i = 0; i < 1300000; i++){
+    auto resp = api.dispatch(&data);
+  }
+  acc_store.get_item(100)->repr();
+//  */
 
   return 0;
 }

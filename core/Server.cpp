@@ -6,34 +6,19 @@
 #include <iostream>
 //#include <stdio.h>
 //#include <stdlib.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
 #include "Server.h"
 
 #define SOCKET_CONNECTION_NUM 1
 #define BUFFER_SIZE 1024
-#define LENGTH_SIZE 9
-#define METHOD_SIZE 4
 
-string Api::dispatch(string data) {
-  string method = "";
+//#define DEBUG_MODE
 
-  if (data.size() < METHOD_SIZE) {
-    return "format error";
-  }
-
-  method.append(data, METHOD_SIZE, 0);
-  if (method.compare("PING") == 0){
-    return "PING method";
-  } else if (method.compare("SYNC") == 0){
-    return "PING method";
-  }
-  return "No method";
-}
 
 Server::Server(string unix_sock_file) : unix_sock_file(unix_sock_file) {
-  socklen_t addrlen = sizeof(*(this->address));
+  sockaddr_un address;
+  socklen_t addrlen = sizeof(address);
+  this->address = &address;
+  this->addrlen = addrlen;
 
   // create socket
   this->listen_sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -42,7 +27,7 @@ Server::Server(string unix_sock_file) : unix_sock_file(unix_sock_file) {
     exit(EXIT_FAILURE);
   }
   // bind socket
-  bzero(&(this->address), this->addrlen);
+  bzero(this->address, this->addrlen);
   this->address->sun_family = AF_UNIX;
   this->unix_sock_file.copy(this->address->sun_path, this->unix_sock_file.size(), 0);
 
@@ -61,42 +46,86 @@ int Server::accept_connection() {
   return accept(this->listen_sockfd, (struct sockaddr *) this->address, &(this->addrlen));
 }
 
-string Server::read_massage(int sock) {
-  char length[LENGTH_SIZE+1] = "",
-    buffer[BUFFER_SIZE+1] = "";
-  int ilength, nread;
-  string message;
+string* Server::read_massage(int sock) {
+  char buffer[BUFFER_SIZE+1] = "";
+  int ilength, nread, pos;
+  string* message = nullptr;
+  string* length = nullptr;
 
   nread = (int)read(sock, buffer, BUFFER_SIZE);
-  if (nread <= LENGTH_SIZE) {
-    return "";
+  if (nread <= 0){
+    return nullptr;
   }
 
-  strncpy(length, buffer, LENGTH_SIZE);
-  ilength = atoi(length);
+  pos = strpbrk(buffer, " ") - buffer;
+  length = new string(buffer, pos);
+  ilength = atoi(length->c_str());
 
-  message.append(buffer + LENGTH_SIZE, nread - LENGTH_SIZE);
-  ilength -= (nread - LENGTH_SIZE);
+  if (ilength == 0){
+    return nullptr;
+  }
+
+  message = new string(buffer + pos + 1, nread - pos - 1); //append(buffer + pos + 1, nread - pos - 1);
+  ilength -= (nread - (pos + 1));
 
   while (ilength > 0){
     nread = (int)read(sock, buffer, BUFFER_SIZE);
     if (nread <= 0) {
-      return "";
+      return nullptr;
     }
 
-    message.append(buffer, nread);
+    message->append(buffer, nread);
     ilength -= nread;
+#ifdef DEBUG_MODE
+    std::cout << "message: " << *message << std::endl;
+    std::cout << "ilength: " << ilength << std::endl;
+#endif
   }
 
-  std::cout << "length: " << length << std::endl;
+#ifdef DEBUG_MODE
+  std::cout << "length: " << *length << std::endl;
   std::cout << "ilength: " << ilength << std::endl;
-  std::cout << "message: " << message << std::endl;
+  std::cout << "message: " << *message << std::endl;
+#endif
+  delete length;
   return message;
+}
+
+bool Server::send_massage(int sock, string message) {
+  string chlength = "";
+  int nsend, length = message.length();
+
+#ifdef DEBUG_MODE
+  std::cout << "message: " << message << std::endl;
+#endif
+  chlength = to_string(length);
+  chlength.push_back(' ');
+  nsend = send(sock, chlength.c_str(), chlength.length(), 0);
+
+  if (nsend < chlength.length()){
+    perror("data send error");
+    return false;
+  }
+
+  const char * char_message = message.c_str();
+
+  while (length){
+    nsend = send(sock, char_message, length, 0);
+    if (nsend <= 0){
+      perror("data send error");
+      return false;
+    }
+    length -= nsend;
+    char_message += nsend;
+  }
+  return true;
+
 }
 
 void Server::run(Api * api) {
   int connection;
-  string request = "", response = "";
+  string* request;
+  string response;
 
   while (true) {
     if ((connection = accept_connection()) < 0) {
@@ -106,15 +135,21 @@ void Server::run(Api * api) {
     std::cout << "accept connection" << std::endl;
 
     while (true) {
-      if ((request = this->read_massage(connection)).empty()) {
+      if ((request = this->read_massage(connection)) == nullptr) {
         std::cout << "connection is closed" << std::endl;
         close(connection);
+        delete request;
         break;
       }
 
       response = api->dispatch(request);
+      delete request;
 
-      
+      if (!send_massage(connection, response)){
+        std::cout << "connection is closed" << std::endl;
+        close(connection);
+        break;
+      }
     }
   }
 }
