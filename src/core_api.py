@@ -1,35 +1,61 @@
 import socket
 
-def mess_pack(message: bytes):
-    length_prefix = "{} ".format(len(message))
-    return length_prefix.encode() + message
+BUFFER_SIZE = 1024
 
 
-sock_file = "/tmp/server-socket.sock"
-sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-sock.connect(sock_file)
+class CoreClient:
 
-def get_message(sock):
-    resp = sock.recv(1024).decode()
-    while " " not in resp:
-        resp += sock.recv(1024).decode()
-    length, resp = resp.split(" ", 1)
-    length = int(length)
-    while length > len(resp):
-        resp += sock.recv(1024).decode()
-    return resp
+    def __init__(self, address: str):
+        self.address = address
+        self.fd = None
 
-import time
+    def connect(self):
+        if self.fd is not None:
+            raise Exception("already connected")
 
-try:
+        self.fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.fd.connect(self.address)
+
+    def _send(self, data):
+        if isinstance(data, str):
+            data = data.encode()
+        self.fd.send(self._mess_pack(data))
+
+    def _recv(self):
+        resp = self.fd.recv(BUFFER_SIZE).decode()
+        while " " not in resp:
+            resp += self.fd.recv(BUFFER_SIZE).decode()
+        length, resp = resp.split(" ", 1)
+        length = int(length)
+        while length > len(resp):
+            resp += self.fd.recv(BUFFER_SIZE).decode()
+        return resp
+
+    @staticmethod
+    def _mess_pack(message: bytes):
+        length_prefix = "{} ".format(len(message))
+        return length_prefix.encode() + message
+
+
+class ApiCore(CoreClient):
+    def _rpc_method(self, method, data):
+        self._send("{} {}".format(method, data))
+        return self._recv()
+
+    def method_AADD(self, data):
+        return self._rpc_method('AADD', data)
+
+
+if __name__ == "__main__":
+    acc_data = "id 123 b 2345345 fn asdgkajdew p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city"
+
+    sock_file = "/tmp/server-socket.sock"
+    core = ApiCore(sock_file)
+    print("connect")
+    core.connect()
+    print("connected")
+
+    import time
     start = time.time()
-    for i in range(1):
-        sock.send(mess_pack(b'AADD ' + str(i).encode() + b'q' * 1200))
-        resp = get_message(sock)
-        # print(i, resp)
+    print(core.method_AADD(acc_data))
     print(time.time() - start)
-except Exception as e:
-    print(i)
-    raise e
-
-print(i, resp)
