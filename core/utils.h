@@ -9,7 +9,7 @@
 
 namespace utils {
     int int_from_string(string data);
-    string next_block(string* data, size_t &left, size_t &right);
+    string next_block(string const &data, size_t &left, size_t &right);
 //    void parse_account(string data);
     void fill_massive(Store *acc_store, int acc_num);
 }

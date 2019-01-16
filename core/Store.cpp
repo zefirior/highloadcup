@@ -38,50 +38,51 @@ void Store::parse_account(string data) {
   Like *like_root = nullptr, *like_new = nullptr;
 
   while (right < string::npos) {
-    marker = utils::next_block(&data, left, right);
-    if (marker.compare("i") == 0){
-      id = utils::int_from_string(utils::next_block(&data, left, right));
+    marker = utils::next_block(data, left, right);
+    if (marker.compare("id") == 0){
+      id = utils::int_from_string(utils::next_block(data, left, right));
 
     } else if (marker.compare("b") == 0) {
-      birth = utils::int_from_string(utils::next_block(&data, left, right));
+      birth = utils::int_from_string(utils::next_block(data, left, right));
 
     } else if (marker.compare("p") == 0) {
       premium = new Premium;
-      premium->premium_from = utils::int_from_string(utils::next_block(&data, left, right));
-      premium->premium_to = utils::int_from_string(utils::next_block(&data, left, right));
+      premium->premium_from = utils::int_from_string(utils::next_block(data, left, right));
+      premium->premium_to = utils::int_from_string(utils::next_block(data, left, right));
 
     } else if (marker.compare("s") == 0) {
-      sex = utils::next_block(&data, left, right)[0];
+      sex = utils::next_block(data, left, right)[0];
 
     } else if (marker.compare("st") == 0) {
-      status = utils::next_block(&data, left, right)[0];
+      status = utils::next_block(data, left, right)[0];
 
     } else if (marker.compare("ph") == 0) {
-      phone = utils::next_block(&data, left, right);
+      phone = utils::next_block(data, left, right);
 
     } else if (marker.compare("e") == 0) {
-      email = utils::next_block(&data, left, right);
+      email = utils::next_block(data, left, right);
 
     } else if (marker.compare("fn") == 0) {
-      fname = get_ptr_from_map(&fname_map, utils::next_block(&data, left, right));
+      fname = get_ptr_from_map(&fname_map, utils::next_block(data, left, right));
 
     } else if (marker.compare("sn") == 0) {
-      sname = get_ptr_from_map(&sname_map, utils::next_block(&data, left, right));
+      sname = get_ptr_from_map(&sname_map, utils::next_block(data, left, right));
 
     } else if (marker.compare("co") == 0) {
-      country = get_ptr_from_map(&country_map, utils::next_block(&data, left, right));
+      country = get_ptr_from_map(&country_map, utils::next_block(data, left, right));
 
     } else if (marker.compare("ci") == 0) {
-      city = get_ptr_from_map(&city_map, utils::next_block(&data, left, right));
+      city = get_ptr_from_map(&city_map, utils::next_block(data, left, right));
 
-    } else if (marker.compare("l") == 0) {
+    } else if (marker == "l") {
       like_new = new Like;
-      like_new->id = utils::int_from_string(utils::next_block(&data, left, right));
-      like_new->ts = utils::int_from_string(utils::next_block(&data, left, right));
+      like_new->id = utils::int_from_string(utils::next_block(data, left, right));
+      like_new->ts = utils::int_from_string(utils::next_block(data, left, right));
       like_new->next = like_root;
       like_root = like_new;
 
     } else {
+      cout << "unexpected marker" << marker << endl;
       perror("unexpected marker");
     }
   }

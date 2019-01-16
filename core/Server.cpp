@@ -122,9 +122,9 @@ bool Server::send_massage(int sock, string message) {
 
 }
 
-void Server::run(Api * api) {
+void Server::run(Api const &api) {
   int connection;
-  string* request;
+  string const *request;
   string response;
 
   while (true) {
@@ -141,9 +141,10 @@ void Server::run(Api * api) {
         delete request;
         break;
       }
-
-      response = api->dispatch(request);
+      std::cout << "read " << *request << std::endl;
+      response = api.dispatch(*request);
       delete request;
+      std::cout << "dispatch " << response << std::endl;
 
       if (!send_massage(connection, response)){
         std::cout << "connection is closed" << std::endl;

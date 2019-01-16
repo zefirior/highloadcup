@@ -12,11 +12,11 @@
 using namespace std;
 
 class Api {
-    Store* store;
-    string add_account(string data);
+    Store &store;
+    string add_account(const string &data) const;
   public:
-    Api(Store* store);
-    string dispatch(string* data);
+    explicit Api(Store &store);
+    string dispatch(const string &data) const;
 };
 
 #endif //CORE_API_H

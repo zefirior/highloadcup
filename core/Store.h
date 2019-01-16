@@ -5,6 +5,7 @@
 #ifndef CORE_STORE_H
 #define CORE_STORE_H
 
+#include <iostream>
 #include <vector>
 #include <map>
 #include "model/Account.h"
