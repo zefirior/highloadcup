@@ -19,9 +19,9 @@ class Server {
     sockaddr_un* address;
     socklen_t addrlen;
   public:
-    Server(string unix_sock_file);
+    explicit Server(string unix_sock_file);
     int accept_connection();
-    void run(Api const &api);
+    void run(Api &api);
     string* read_massage(int sock);
     bool send_massage(int sock, string message);
 };

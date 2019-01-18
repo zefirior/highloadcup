@@ -7,19 +7,24 @@
 #include "model/Account.h"
 using namespace std;
 
-Store::Store(int reserve_size) {
+Store::Store(unsigned long reserve_size) {
   this->data.reserve(reserve_size);
+  this->city_map =    new map <size_t, string*>;
+  this->country_map = new map <size_t, string*>;
+  this->fname_map =   new map <size_t, string*>;
+  this->sname_map =   new map <size_t, string*>;
 }
 
 void Store::add_item(Account* item) {
   this->data.push_back(item);
 }
 
-string* Store::get_ptr_from_map(map<string, string *> *container, string data) {
-  if (!container->count(data)){
-    (*container)[data] = new string(data);
+string* Store::get_ptr_from_map(map<size_t, string *> *container, string const &data) {
+  size_t const block_hash = hash<string>()(data);
+  if (!container->count(block_hash)){
+    (*container)[block_hash] = new string(data);
   }
-  return container->find(data)->second;
+  return container->find(block_hash)->second;
 }
 
 void Store::parse_account(string data) {
@@ -27,8 +32,9 @@ void Store::parse_account(string data) {
   int id, birth;
   char sex, status;
   string
+    block,
     marker,
-    phone = "",
+    phone,
     email,
     *fname = nullptr,
     *sname = nullptr,
@@ -39,40 +45,69 @@ void Store::parse_account(string data) {
 
   while (right < string::npos) {
     marker = utils::next_block(data, left, right);
-    if (marker.compare("id") == 0){
+    if (marker == "id"){
       id = utils::int_from_string(utils::next_block(data, left, right));
 
-    } else if (marker.compare("b") == 0) {
+    } else if (marker == "b") {
       birth = utils::int_from_string(utils::next_block(data, left, right));
 
-    } else if (marker.compare("p") == 0) {
+    } else if (marker == "p") {
       premium = new Premium;
       premium->premium_from = utils::int_from_string(utils::next_block(data, left, right));
       premium->premium_to = utils::int_from_string(utils::next_block(data, left, right));
 
-    } else if (marker.compare("s") == 0) {
+    } else if (marker == "s") {
       sex = utils::next_block(data, left, right)[0];
 
-    } else if (marker.compare("st") == 0) {
+    } else if (marker == "st") {
       status = utils::next_block(data, left, right)[0];
 
-    } else if (marker.compare("ph") == 0) {
+    } else if (marker == "ph") {
       phone = utils::next_block(data, left, right);
 
-    } else if (marker.compare("e") == 0) {
+    } else if (marker == "e") {
       email = utils::next_block(data, left, right);
 
-    } else if (marker.compare("fn") == 0) {
-      fname = get_ptr_from_map(&fname_map, utils::next_block(data, left, right));
+    } else if (marker == "fn") {
+//      block = utils::next_block(data, left, right);
+//
+//      if (!fname_map->count(hash<string>()(block))){
+//        (*fname_map)[hash<string>()(block)] = new string(block);
+//      }
+//      fname = fname_map->find(hash<string>()(block))->second;
+        block = utils::next_block(data, left, right);
 
-    } else if (marker.compare("sn") == 0) {
-      sname = get_ptr_from_map(&sname_map, utils::next_block(data, left, right));
+      fname = get_ptr_from_map(fname_map, block);
 
-    } else if (marker.compare("co") == 0) {
-      country = get_ptr_from_map(&country_map, utils::next_block(data, left, right));
+    } else if (marker == "sn") {
+//      block = utils::next_block(data, left, right);
+//
+//      if (!sname_map->count(block)){
+//        (*sname_map)[block] = new string(block);
+//      }
+//      sname = sname_map->find(block)->second;
 
-    } else if (marker.compare("ci") == 0) {
-      city = get_ptr_from_map(&city_map, utils::next_block(data, left, right));
+      sname = get_ptr_from_map(sname_map, utils::next_block(data, left, right));
+
+    } else if (marker == "co") {
+//      block = utils::next_block(data, left, right);
+//
+//      if (!country_map->count(block)){
+//        (*country_map)[block] = new string(block);
+//      }
+//      country = country_map->find(block)->second;
+//
+      country = get_ptr_from_map(country_map, utils::next_block(data, left, right));
+
+    } else if (marker == "ci") {
+//      block = utils::next_block(data, left, right);
+//
+//      if (!fname_map->count(block)){
+//        (*fname_map)[block] = new string(block);
+//      }
+//      city = fname_map->find(block)->second;
+//
+      city = get_ptr_from_map(city_map, utils::next_block(data, left, right));
 
     } else if (marker == "l") {
       like_new = new Like;

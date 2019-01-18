@@ -122,7 +122,7 @@ bool Server::send_massage(int sock, string message) {
 
 }
 
-void Server::run(Api const &api) {
+void Server::run(Api &api) {
   int connection;
   string const *request;
   string response;

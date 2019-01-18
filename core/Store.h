@@ -12,15 +12,15 @@
 using namespace std;
 
 class Store {
+public:
   std::vector <Account*> data;
-  map <string, string*> fname_map;
-  map <string, string*> sname_map;
-  map <string, string*> country_map;
-  map <string, string*> city_map;
-  public:
-    Store (int reserve_size);
+  map <size_t, string*> *fname_map;
+  map <size_t, string*> *sname_map;
+  map <size_t, string*> *country_map;
+  map <size_t, string*> *city_map;
+    explicit Store (unsigned long reserve_size);
     void add_item(Account* item);
-    string* get_ptr_from_map(map <string, string*> *container, string data);
+    string* get_ptr_from_map(map <size_t, string*> *container, string const &data);
     void parse_account(string data);
     Account* get_item(int index);
 };
