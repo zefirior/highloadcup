@@ -7,22 +7,37 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
+//#include <map>
+#include "Container.h"
 #include "model/Account.h"
 using namespace std;
 
+typedef unordered_map <string, string*> _store_map;
+
 class Store {
-public:
   std::vector <Account*> data;
-  map <size_t, string*> *fname_map;
-  map <size_t, string*> *sname_map;
-  map <size_t, string*> *country_map;
-  map <size_t, string*> *city_map;
+  Container fname_map;
+  Container sname_map;
+  Container country_map;
+  Container city_map;
+  Container interest_map;
+  public:
     explicit Store (unsigned long reserve_size);
-    void add_item(Account* item);
-    string* get_ptr_from_map(map <size_t, string*> *container, string const &data);
-    void parse_account(string data);
-    Account* get_item(int index);
+
+    ~Store(){cout << "~Store" << endl;};
+
+    void
+    add_item(Account* item);
+
+    void
+    parse_account(string &data);
+
+    int
+    count_account();
+
+    Account*
+    get_item(int index);
 };
 
 #endif //CORE_STORE_H

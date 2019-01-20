@@ -18,10 +18,12 @@ class Server {
     int listen_sockfd;
     sockaddr_un* address;
     socklen_t addrlen;
+    Api* _api;
   public:
     explicit Server(string unix_sock_file);
     int accept_connection();
-    void run(Api &api);
+    void set_api(Api *api);
+    void run();
     string* read_massage(int sock);
     bool send_massage(int sock, string message);
 };

@@ -43,7 +43,7 @@ Server::Server(string unix_sock_file) : unix_sock_file(unix_sock_file) {
 }
 
 int Server::accept_connection() {
-  return accept(this->listen_sockfd, (struct sockaddr *) this->address, &(this->addrlen));
+  return accept(listen_sockfd, (struct sockaddr *) address, &addrlen);
 }
 
 string* Server::read_massage(int sock) {
@@ -76,17 +76,8 @@ string* Server::read_massage(int sock) {
 
     message->append(buffer, nread);
     ilength -= nread;
-#ifdef DEBUG_MODE
-    std::cout << "message: " << *message << std::endl;
-    std::cout << "ilength: " << ilength << std::endl;
-#endif
   }
 
-#ifdef DEBUG_MODE
-  std::cout << "length: " << *length << std::endl;
-  std::cout << "ilength: " << ilength << std::endl;
-  std::cout << "message: " << *message << std::endl;
-#endif
   delete length;
   return message;
 }
@@ -95,9 +86,6 @@ bool Server::send_massage(int sock, string message) {
   string chlength = "";
   int nsend, length = message.length();
 
-#ifdef DEBUG_MODE
-  std::cout << "message: " << message << std::endl;
-#endif
   chlength = to_string(length);
   chlength.push_back(' ');
   nsend = send(sock, chlength.c_str(), chlength.length(), 0);
@@ -122,7 +110,12 @@ bool Server::send_massage(int sock, string message) {
 
 }
 
-void Server::run(Api &api) {
+void
+Server::set_api(Api *api)
+{_api = api;}
+
+void
+Server::run() {
   int connection;
   string const *request;
   string response;
@@ -135,16 +128,14 @@ void Server::run(Api &api) {
     std::cout << "accept connection" << std::endl;
 
     while (true) {
-      if ((request = this->read_massage(connection)) == nullptr) {
-        std::cout << "connection is closed" << std::endl;
+      if ((request = read_massage(connection)) == nullptr) {
         close(connection);
         delete request;
         break;
       }
-      std::cout << "read " << *request << std::endl;
-      response = api.dispatch(*request);
+//      std::cout << "read " << *request << std::endl;
+      response = _api->dispatch(*request);
       delete request;
-      std::cout << "dispatch " << response << std::endl;
 
       if (!send_massage(connection, response)){
         std::cout << "connection is closed" << std::endl;

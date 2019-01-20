@@ -9,25 +9,14 @@ using namespace std;
 
 Store::Store(unsigned long reserve_size) {
   this->data.reserve(reserve_size);
-  this->city_map =    new map <size_t, string*>;
-  this->country_map = new map <size_t, string*>;
-  this->fname_map =   new map <size_t, string*>;
-  this->sname_map =   new map <size_t, string*>;
 }
 
 void Store::add_item(Account* item) {
   this->data.push_back(item);
 }
 
-string* Store::get_ptr_from_map(map<size_t, string *> *container, string const &data) {
-  size_t const block_hash = hash<string>()(data);
-  if (!container->count(block_hash)){
-    (*container)[block_hash] = new string(data);
-  }
-  return container->find(block_hash)->second;
-}
-
-void Store::parse_account(string data) {
+void
+Store::parse_account(string &data) {
   size_t left=0, right=0;
   int id, birth;
   char sex, status;
@@ -42,6 +31,7 @@ void Store::parse_account(string data) {
     *city = nullptr;
   Premium *premium = nullptr;
   Like *like_root = nullptr, *like_new = nullptr;
+  Interest *interest_root = nullptr, *interest_new = nullptr;
 
   while (right < string::npos) {
     marker = utils::next_block(data, left, right);
@@ -53,8 +43,8 @@ void Store::parse_account(string data) {
 
     } else if (marker == "p") {
       premium = new Premium;
-      premium->premium_from = utils::int_from_string(utils::next_block(data, left, right));
-      premium->premium_to = utils::int_from_string(utils::next_block(data, left, right));
+      premium->from = utils::int_from_string(utils::next_block(data, left, right));
+      premium->to = utils::int_from_string(utils::next_block(data, left, right));
 
     } else if (marker == "s") {
       sex = utils::next_block(data, left, right)[0];
@@ -69,45 +59,18 @@ void Store::parse_account(string data) {
       email = utils::next_block(data, left, right);
 
     } else if (marker == "fn") {
-//      block = utils::next_block(data, left, right);
-//
-//      if (!fname_map->count(hash<string>()(block))){
-//        (*fname_map)[hash<string>()(block)] = new string(block);
-//      }
-//      fname = fname_map->find(hash<string>()(block))->second;
-        block = utils::next_block(data, left, right);
-
-      fname = get_ptr_from_map(fname_map, block);
+      block = utils::next_block(data, left, right);
+      fname = fname_map.get_ptr(block);
 
     } else if (marker == "sn") {
-//      block = utils::next_block(data, left, right);
-//
-//      if (!sname_map->count(block)){
-//        (*sname_map)[block] = new string(block);
-//      }
-//      sname = sname_map->find(block)->second;
-
-      sname = get_ptr_from_map(sname_map, utils::next_block(data, left, right));
+      block = utils::next_block(data, left, right);
+      sname = sname_map.get_ptr(block);
 
     } else if (marker == "co") {
-//      block = utils::next_block(data, left, right);
-//
-//      if (!country_map->count(block)){
-//        (*country_map)[block] = new string(block);
-//      }
-//      country = country_map->find(block)->second;
-//
-      country = get_ptr_from_map(country_map, utils::next_block(data, left, right));
+      country = country_map.get_ptr(utils::next_block(data, left, right));
 
     } else if (marker == "ci") {
-//      block = utils::next_block(data, left, right);
-//
-//      if (!fname_map->count(block)){
-//        (*fname_map)[block] = new string(block);
-//      }
-//      city = fname_map->find(block)->second;
-//
-      city = get_ptr_from_map(city_map, utils::next_block(data, left, right));
+      city = city_map.get_ptr(utils::next_block(data, left, right));
 
     } else if (marker == "l") {
       like_new = new Like;
@@ -115,6 +78,13 @@ void Store::parse_account(string data) {
       like_new->ts = utils::int_from_string(utils::next_block(data, left, right));
       like_new->next = like_root;
       like_root = like_new;
+
+    } else if (marker == "in") {
+      sname = sname_map.get_ptr(utils::next_block(data, left, right));
+      interest_new = new Interest;
+      interest_new->name = interest_map.get_ptr(utils::next_block(data, left, right));
+      interest_new->next = interest_root;
+      interest_root = interest_new;
 
     } else {
       cout << "unexpected marker" << marker << endl;
@@ -124,12 +94,17 @@ void Store::parse_account(string data) {
 
   auto acc = new Account(
     id, birth, premium, sex, status, phone, email,
-    fname, sname, country, city, like_root
+    fname, sname, country, city, like_root, interest_root
   );
   add_item(acc);
+//  acc->repr();
 
 }
 
 Account* Store::get_item(int index){
   return this->data[index];
 }
+
+int
+Store::count_account()
+{ return (int)data.size(); }

@@ -38,16 +38,22 @@ class CoreClient:
 
 
 class ApiCore(CoreClient):
-    def _rpc_method(self, method, data):
+    def _rpc_method(self, method, data=""):
         self._send("{} {}".format(method, data))
         return self._recv()
 
     def method_AADD(self, data):
         return self._rpc_method('AADD', data)
 
+    def method_CACC(self):
+        return self._rpc_method("CACC")
+
+    def method_PLST(self):
+        return self._rpc_method("PLST")
+
 
 if __name__ == "__main__":
-    acc_data = "id 123 b 2345345 fn asdgkajdew p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city"
+    acc_data = "id 123 b 223445345 fn asdgkajdew p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city_new"
 
     sock_file = "/tmp/server-socket.sock"
     core = ApiCore(sock_file)
@@ -57,5 +63,10 @@ if __name__ == "__main__":
 
     import time
     start = time.time()
-    print(core.method_AADD(acc_data))
+    for _ in range(1002):
+        if core.method_AADD(acc_data) != "ok":
+            raise Exception
+
     print(time.time() - start)
+    print(core.method_CACC())
+    print(core.method_PLST())
