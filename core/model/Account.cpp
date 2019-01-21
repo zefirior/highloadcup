@@ -7,27 +7,28 @@
 using namespace std;
 
 Account::Account(
-  int id, int birth, Premium *premium, char sex, char status, string phone,
+  int id, int birth, int joined, Premium *premium, char sex, char status, string phone,
   string email, string *fname, string *sname, string *country, string *city, Like *like, Interest *interest
 ) :
-  id(id), birth(birth), premium(premium), sex(sex), status(status), phone(phone),
+  id(id), birth(birth), joined(joined), premium(premium), sex(sex), status(status), phone(phone),
   email(email), fname(fname), sname(sname), country(country), city(city), like(like), interest(interest)
   {};
 
 void Account::repr() const {
-  std::cout << "<Account: " << endl
-            << "  " << "id=" << id << endl
-            << "  " << "birth=" << birth << endl
-            << "  " << "sex=" << sex << endl
-            << "  " << "status=" << status << endl
-            << "  " << "phone=" << phone << endl
-            << "  " << "email=" << email << endl
-            << "  " << "fname=" << *fname << endl
-            << "  " << "sname=" << *sname << endl
-            << "  " << "country=" << *country << endl
-            << "  " << "city=" << *city << endl;
+  std::cout << "<Account: " << endl;
+  std::cout << "  " << "id=" << id << endl;
+  std::cout << "  " << "birth=" << birth << endl;
+  std::cout << "  " << "joined=" << joined << endl;
+  std::cout << "  " << "sex=" << sex << endl;
+  std::cout << "  " << "status=" << status << endl;
+  std::cout << "  " << "phone=" << phone << endl;
+  std::cout << "  " << "email=" << email << endl;
+  if (fname){std::cout << "  " << "fname=" << *fname << endl;}
+  if (sname){std::cout << "  " << "sname=" << *sname << endl;}
+  if (country){std::cout << "  " << "country=" << *country << endl;}
+  if (city){std::cout << "  " << "city=" << *city << endl;}
 
-  cout << "  premium->from=" << premium->from << ", premium->to=" << premium->to << endl;
+  if (premium){cout << "  premium->from=" << premium->from << ", premium->to=" << premium->to << endl;}
 
   Like *_like = like;
   cout << "  likes:" << endl;
@@ -42,6 +43,6 @@ void Account::repr() const {
     cout << "    interest->name=" << *_interest->name << endl;
     _interest = _interest->next;
   }
-  
+
   cout << ">" << std::endl;
 };

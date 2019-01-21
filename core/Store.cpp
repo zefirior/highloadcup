@@ -18,7 +18,7 @@ void Store::add_item(Account* item) {
 void
 Store::parse_account(string &data) {
   size_t left=0, right=0;
-  int id, birth;
+  int id, birth, joined;
   char sex, status;
   string
     block,
@@ -40,6 +40,9 @@ Store::parse_account(string &data) {
 
     } else if (marker == "b") {
       birth = utils::int_from_string(utils::next_block(data, left, right));
+
+    } else if (marker == "jo") {
+      joined = utils::int_from_string(utils::next_block(data, left, right));
 
     } else if (marker == "p") {
       premium = new Premium;
@@ -80,7 +83,6 @@ Store::parse_account(string &data) {
       like_root = like_new;
 
     } else if (marker == "in") {
-      sname = sname_map.get_ptr(utils::next_block(data, left, right));
       interest_new = new Interest;
       interest_new->name = interest_map.get_ptr(utils::next_block(data, left, right));
       interest_new->next = interest_root;
@@ -93,7 +95,7 @@ Store::parse_account(string &data) {
   }
 
   auto acc = new Account(
-    id, birth, premium, sex, status, phone, email,
+    id, birth, joined, premium, sex, status, phone, email,
     fname, sname, country, city, like_root, interest_root
   );
   add_item(acc);

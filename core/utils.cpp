@@ -14,7 +14,7 @@ string utils::next_block(string const &data, size_t &left, size_t &right){
   if (right != 0){
     left = right + 1;
   }
-  right = data.find(' ', left);
+  right = data.find('|', left);
   return data.substr(left, right - left);
 
 }

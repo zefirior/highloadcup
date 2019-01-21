@@ -27,6 +27,7 @@ struct Premium {
 class Account {
   int32_t id;
   int32_t birth;
+  int32_t joined;
   char sex;
   char status;
   string phone;
@@ -43,6 +44,7 @@ public:
   Account(
     int32_t id,
     int32_t birth,
+    int32_t joined,
     Premium *premium,
     char sex,
     char status,

@@ -53,7 +53,8 @@ class ApiCore(CoreClient):
 
 
 if __name__ == "__main__":
-    acc_data = "id 123 b 223445345 fn asdgkajdew p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city_new"
+    acc_data = "id 123 b 223445345 fn asdgkajdew s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city_new"
+    # acc_data = "id 123 b 223445345 fn asdgkajdew p 42 235 s 0 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 134 65473 l 2345 678683 st 1 ph 8(912)6290012 e alegfbhhh@afdh.ru sn qweasd co country ci city_new"
 
     sock_file = "/tmp/server-socket.sock"
     core = ApiCore(sock_file)
