@@ -18,7 +18,7 @@ void Store::add_item(Account* item) {
 void
 Store::parse_account(string &data) {
   size_t left=0, right=0;
-  int id, birth, joined;
+  int i, like_num, id, birth, joined;
   char sex, status;
   string
     block,
@@ -30,7 +30,8 @@ Store::parse_account(string &data) {
     *country = nullptr,
     *city = nullptr;
   Premium *premium = nullptr;
-  Like *like_root = nullptr, *like_new = nullptr;
+  type_like *_like = nullptr;
+  Like like_new;
   Interest *interest_root = nullptr, *interest_new = nullptr;
 
   while (right < string::npos) {
@@ -76,11 +77,14 @@ Store::parse_account(string &data) {
       city = city_map.get_ptr(utils::next_block(data, left, right));
 
     } else if (marker == "l") {
-      like_new = new Like;
-      like_new->id = utils::int_from_string(utils::next_block(data, left, right));
-      like_new->ts = utils::int_from_string(utils::next_block(data, left, right));
-      like_new->next = like_root;
-      like_root = like_new;
+      like_num = utils::int_from_string(utils::next_block(data, left, right));
+      _like = new type_like(like_num);
+
+      for (i=0;i<like_num;i++){
+        like_new.id = utils::int_from_string(utils::next_block(data, left, right));
+        like_new.ts = utils::int_from_string(utils::next_block(data, left, right));
+        _like->at((unsigned long)i) = like_new;
+      }
 
     } else if (marker == "in") {
       interest_new = new Interest;
@@ -96,7 +100,7 @@ Store::parse_account(string &data) {
 
   auto acc = new Account(
     id, birth, joined, premium, sex, status, phone, email,
-    fname, sname, country, city, like_root, interest_root
+    fname, sname, country, city, _like, interest_root
   );
   add_item(acc);
 //  acc->repr();

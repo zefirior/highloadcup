@@ -8,13 +8,17 @@ using namespace std;
 
 Account::Account(
   int id, int birth, int joined, Premium *premium, char sex, char status, string phone,
-  string email, string *fname, string *sname, string *country, string *city, Like *like, Interest *interest
+  string email, string *fname, string *sname, string *country, string *city, type_like *like, Interest *interest
 ) :
   id(id), birth(birth), joined(joined), premium(premium), sex(sex), status(status), phone(phone),
   email(email), fname(fname), sname(sname), country(country), city(city), like(like), interest(interest)
   {};
 
 void Account::repr() const {
+
+  int i;
+  Like _like;
+
   std::cout << "<Account: " << endl;
   std::cout << "  " << "id=" << id << endl;
   std::cout << "  " << "birth=" << birth << endl;
@@ -30,11 +34,11 @@ void Account::repr() const {
 
   if (premium){cout << "  premium->from=" << premium->from << ", premium->to=" << premium->to << endl;}
 
-  Like *_like = like;
-  cout << "  likes:" << endl;
-  while (_like != nullptr) {
-    cout << "    like->id=" << _like->id << ", like->ts=" << _like->ts << endl;
-    _like = _like->next;
+  if (like) {
+    cout << "  likes:" << endl;
+    for (Like _like : *like) {
+      cout << "    like->id=" << _like.id << ", like->ts=" << _like.ts << endl;
+    }
   }
 
   Interest *_interest = interest;

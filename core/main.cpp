@@ -1,7 +1,7 @@
 #define DEBUG_MODE
 
 #include <iostream>
-#include <map>
+#include <bitset>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +38,15 @@ int main() {
   acc_store.get_item(100)->repr();
   */
 
+  vector<Like> cont;
+  cont.reserve(5);
+  cont[1].id = 12;
+  cont[1].ts = 1242;
+
+  cout << 1 << endl;
+  for (Like l : cont){
+    cout << "id = " << l.id << ", ts = " << l.ts << endl;
+  }
 
   return 0;
 }

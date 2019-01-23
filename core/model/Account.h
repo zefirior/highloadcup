@@ -6,12 +6,12 @@
 #define CORE_ACCOUNT_H
 
 #include <string>
+#include <vector>
 using namespace std;
 
 struct Like {
   int32_t id;
   int32_t ts;
-  Like *next;
 };
 
 struct Interest {
@@ -23,6 +23,8 @@ struct Premium {
   int32_t from;
   int32_t to;
 };
+
+typedef vector<Like> type_like;
 
 class Account {
   int32_t id;
@@ -38,7 +40,7 @@ class Account {
   string *city;
   Interest *interest;
   Premium *premium;
-  Like *like;
+  type_like *like;
 
 public:
   Account(
@@ -54,7 +56,7 @@ public:
     string *sname,
     string *country,
     string *city,
-    Like *like,
+    type_like *like,
     Interest *interest
   );
   void repr() const;

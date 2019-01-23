@@ -64,8 +64,9 @@ def encode_account(obj: dict):
             result += [marker, str(obj[key])]
 
     if "likes" in obj:
+        result += ["l", str(len(obj["likes"]))]
         for like in obj["likes"]:
-            result += ["l", str(like["id"]), str(like["ts"])]
+            result += [str(like["id"]), str(like["ts"])]
 
     if "interests" in obj:
         for interest in obj["interests"]:
@@ -91,7 +92,7 @@ try:
     print("path=", sys.argv[1])
     data_dir = pl.Path(sys.argv[1])
     start = time.time()
-    for _ in range(40):
+    for _ in range(1500000 // 10000 // 3):
         for file in data_dir.iterdir():
             if file.is_file() and is_account_source(file.name):
                 jobj = read_data(file)
