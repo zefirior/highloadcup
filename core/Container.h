@@ -12,11 +12,12 @@
 using namespace std;
 
 class Container {
+    std::vector <string> _data;
+    int16_t cur_index = 0;
+//    std::map <string, string*> _data;
   public:
-//    std::vector <string*> _data;
-    std::map <string, string*> _data;
 //    size_t _size = 0;
-    string* get_ptr(const string &value);
+    int get_idx(const string &value);
 };
 
 
