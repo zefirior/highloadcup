@@ -3,16 +3,15 @@ services:
   highload:
     build:
       context: .
-      dockerfile: ./docker/hload/Dockerfile
-    volumes:
-      - "./hload-entrypoint.sh:/app/hload-entrypoint.sh"
-      - "hload_data:/tmp/data:ro"
-      - "./db:/app/db"
-      - "./src:/app/src"
-    network_mode: host
-#    ports:
-#      - "3306:3306"
-#      - "8001:80"
+      dockerfile: Dockerfile
+#    volumes:
+#      - "./hload-entrypoint.sh:/app/hload-entrypoint.sh"
+#      - "hload_data:/tmp/data:ro"
+#      - "./db:/app/db"
+#      - "./cmd:/app/cmd"
+#    network_mode: host
+    ports:
+      - "8080:8080"
 volumes:
   hload_data:
     external: true
