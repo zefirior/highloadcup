@@ -107,3 +107,36 @@ except Exception as e:
     logger.error(str(e))
 else:
     logger.info('End parse')
+
+
+from collections import Counter
+import string
+
+
+class Item:
+    def __init__(self, ch, num, flag):
+        self.ch = ch
+        self.num = num
+        self.flag = flag
+
+    @staticmethod
+    def filter(item):
+        return item.num > 1
+
+    def __str__(self):
+        return "{}:{}".format(self.flag, self.ch * self.num)
+
+
+def construct_item(ch, max1, max2):
+    if max1 == max2:
+        return Item(ch, max1, "=")
+    return [Item(ch, max1, "1"), Item(ch, max2, "2")][max1 < max2]
+
+
+def mix(s1, s2):
+    c1, c2 = Counter(s1), Counter(s2)
+    data = [construct_item(ch, c1.get(ch, 0), c2.get(ch, 0)) for ch in string.ascii_lowercase]
+    data = filter(Item.filter, data)
+    data = sorted(data, key=lambda item: str(item))
+    data = sorted(data, key=lambda item: item.num, reverse=True)
+    return "/".join(str(item) for item in data)
