@@ -1,16 +1,16 @@
 package main
 
-import (
-	"fmt"
-	"encoding/json"
-)
+//import (
+//	"fmt"
+//	"encoding/json"
+//)
 
 type Example struct {
 	Row string
-	Id int
+	Id  int
 	Foo []rune
 }
 
-func main()  {
-	e = 
-}
+//func main()  {
+//	e =
+//}
