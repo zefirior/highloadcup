@@ -64,7 +64,7 @@ func TestUnmarshal(t *testing.T) {
 		t.Error(err)
 	}
 	expect := &Example{"some str", []Node{{"1", "2"}}}
-	if !equal(got, expect) {
+	if !got.Equal(expect) {
 		t.Error("Got: ", got)
 		t.Error("Expect: ", expect)
 	}

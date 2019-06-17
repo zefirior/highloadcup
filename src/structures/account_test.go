@@ -1,7 +1,34 @@
 package structures
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
-func TestCreate(t *testing.T) {
-	_ = Account{}
+func TestAccountEqual(t *testing.T) {
+	a1 := Account{Fname: 123}
+	a2 := a1
+	assert.True(t, a1.Equal(a2), "Accounts should be equal")
+}
+
+func TestSexIndex(t *testing.T) {
+	assert.Equal(t, SexIndex("f"), 0)
+	assert.Equal(t, SexIndex("m"), 1)
+}
+
+func TestSexValue(t *testing.T) {
+	assert.Equal(t, SexValue(0), "f")
+	assert.Equal(t, SexValue(1), "m")
+}
+
+func TestStatusIndex(t *testing.T) {
+	assert.Equal(t, StatusIndex("свободны"), 0)
+	assert.Equal(t, StatusIndex("заняты"), 1)
+	assert.Equal(t, StatusIndex("всё сложно"), 2)
+}
+
+func TestStatusValue(t *testing.T) {
+	assert.Equal(t, StatusValue(0), "свободны")
+	assert.Equal(t, StatusValue(1), "заняты")
+	assert.Equal(t, StatusValue(2), "всё сложно")
 }
