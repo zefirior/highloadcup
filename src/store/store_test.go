@@ -21,3 +21,77 @@ func TestStore_ParseJAccount(t *testing.T) {
 	store.ParseJAccount(ja)
 	assert.Equal(t, store.GetNumAccount(), 1, "Account not stored")
 }
+
+func TestStore_FilterNum_Empty(t *testing.T) {
+	var q Query
+
+	store := Store{}
+
+	q = Query{}
+	assert.Equal(t, store.FilterNum(q), 0)
+
+}
+
+func TestStore_FilterNum_FindSex(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Birth:1234, Fname:"foo", Sex:"f", Status:"свободны"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{Sex: "m"}
+	assert.Equal(t, store.FilterNum(q), 0)
+	q = Query{Sex: "f"}
+	assert.Equal(t, store.FilterNum(q), 1)
+}
+
+func TestStore_FilterNum_FindStatusEq(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Birth:1234, Fname:"foo", Sex:"f", Status:"свободны"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{StatusEq: "заняты"}
+	assert.Equal(t, store.FilterNum(q), 0)
+	q = Query{StatusEq: "свободны"}
+	assert.Equal(t, store.FilterNum(q), 1)
+}
+
+func TestStore_FilterNum_FindStatusNeq(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Birth:1234, Fname:"foo", Sex:"f", Status:"свободны"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{StatusNeq: "свободны"}
+	assert.Equal(t, store.FilterNum(q), 0)
+	q = Query{StatusNeq: "заняты"}
+	assert.Equal(t, store.FilterNum(q), 1)
+}
+
+func TestStore_FilterNum_FindSexStatus(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Birth:1234, Fname:"foo", Sex:"f", Status:"свободны"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{Sex: "f", StatusNeq: "свободны"}
+	assert.Equal(t, store.FilterNum(q), 0)
+
+	q = Query{Sex: "f", StatusEq: "свободны"}
+	assert.Equal(t, store.FilterNum(q), 1)
+
+	q = Query{Sex: "f", StatusNeq: "заняты"}
+	assert.Equal(t, store.FilterNum(q), 1)
+
+	q = Query{Sex: "m", StatusNeq: "заняты"}
+	assert.Equal(t, store.FilterNum(q), 0)
+
+}

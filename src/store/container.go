@@ -1,5 +1,7 @@
 package store
 
+import "fmt"
+
 type Container struct {
 	values []string
 }
@@ -18,4 +20,12 @@ func (c *Container) Insert(value string) int {
 
 func (c *Container) Get(i int) string {
 	return c.values[i]
+}
+
+func (c *Container) Length() int {
+	return len(c.values)
+}
+
+func (c *Container) PrintValue() {
+	fmt.Println(c.values)
 }
