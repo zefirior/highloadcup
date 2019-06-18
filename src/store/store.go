@@ -70,6 +70,8 @@ type Query struct {
 	Sex string
 	StatusEq string
 	StatusNeq string
+	EmailLt string
+	EmailGt string
 }
 
 func (store *Store) FilterNum(q Query) (n int) {
@@ -85,6 +87,12 @@ func (store *Store) FilterNum(q Query) (n int) {
 			match = match && acc.Status == s.StatusIndex(q.StatusEq)
 		} else if q.StatusNeq != "" {
 			match = match && acc.Status != s.StatusIndex(q.StatusNeq)
+		}
+
+		if q.EmailGt != "" {
+			match = match && acc.Email < q.EmailGt
+		} else if q.EmailLt != "" {
+			match = match && acc.Email > q.EmailLt
 		}
 
 		if match {

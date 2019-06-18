@@ -2,6 +2,7 @@ package main
 
 import (
 	st "./store"
+	"./structures"
 	"./utils"
 	"fmt"
 )
@@ -13,10 +14,14 @@ func main() {
 
 	utils.Check(ReadDir(dir, store))
 
-	var n int
-	for _, acc := range store.Accounts{
+	var (
+		n int
+		acc structures.Account
+	)
+
+	for _, acc = range store.Accounts{
 		if acc.Id == 0 {break}
 		if acc.Sex == 0 { n++ }
 	}
-	fmt.Println("Some stats: ", n)
+	fmt.Println("Num account: ", n)
 }

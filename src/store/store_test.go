@@ -74,6 +74,34 @@ func TestStore_FilterNum_FindStatusNeq(t *testing.T) {
 	assert.Equal(t, store.FilterNum(q), 1)
 }
 
+func TestStore_FilterNum_FindEmailLt(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Sex:"f", Status:"свободны", Email: "foo@goo.com"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{EmailLt: "zoo"}
+	assert.Equal(t, store.FilterNum(q), 0)
+	q = Query{EmailLt: "doo"}
+	assert.Equal(t, store.FilterNum(q), 1)
+}
+
+func TestStore_FilterNum_FindEmailGt(t *testing.T) {
+	var q Query
+
+	store := Store{}
+	ja := s.JAccount{Sex:"f", Status:"свободны", Email: "foo@goo.com"}
+
+	store.ParseJAccount(ja)
+
+	q = Query{EmailGt: "doo"}
+	assert.Equal(t, store.FilterNum(q), 0)
+	q = Query{EmailGt: "zoo"}
+	assert.Equal(t, store.FilterNum(q), 1)
+}
+
 func TestStore_FilterNum_FindSexStatus(t *testing.T) {
 	var q Query
 
