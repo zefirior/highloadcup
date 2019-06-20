@@ -20,7 +20,7 @@ type JAccount struct {
 	Status    string
 	Interests []string
 	Likes     []Likes
-	Premium   Premium
+	Premium   *Premium
 }
 
 type Premium struct {
@@ -30,7 +30,7 @@ type Premium struct {
 
 type Likes struct {
 	Ts int32
-	id int32
+	Id int32
 }
 
 func (a *JAccount) Print() {

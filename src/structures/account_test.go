@@ -12,8 +12,8 @@ func TestAccountEqual(t *testing.T) {
 }
 
 func TestSexIndex(t *testing.T) {
-	assert.Equal(t, SexIndex("f"), 0)
-	assert.Equal(t, SexIndex("m"), 1)
+	assert.Equal(t, SexIndex("f"), int8(0))
+	assert.Equal(t, SexIndex("m"), int8(1))
 }
 
 func TestSexValue(t *testing.T) {
@@ -22,9 +22,9 @@ func TestSexValue(t *testing.T) {
 }
 
 func TestStatusIndex(t *testing.T) {
-	assert.Equal(t, StatusIndex("свободны"), 0)
-	assert.Equal(t, StatusIndex("заняты"), 1)
-	assert.Equal(t, StatusIndex("всё сложно"), 2)
+	assert.Equal(t, StatusIndex("свободны"), int8(0))
+	assert.Equal(t, StatusIndex("заняты"), int8(1))
+	assert.Equal(t, StatusIndex("всё сложно"), int8(2))
 }
 
 func TestStatusValue(t *testing.T) {

@@ -12,10 +12,9 @@ import (
 	"time"
 )
 
-
 const (
-	NumRepeatAccs = 1
-	NumFilterRequest = 1000
+	NumRepeatAccs    = 1
+	NumFilterRequest = 1
 )
 
 func readAccounts(store *st.Store, fname string) (err error) {
@@ -38,20 +37,26 @@ func ReadDir(dir string, store *st.Store) error {
 	utils.PrintMemUsage()
 
 	files, err := ioutil.ReadDir(dir)
-	if err != nil {return err}
+	if err != nil {
+		return err
+	}
 
 	for i := 0; i < NumRepeatAccs; i++ {
 		for _, file := range files {
 			name := file.Name()
 			matched, err := regexp.Match(`accounts_[0-9]*\.json`, []byte(name))
 
-			if err != nil {return err}
+			if err != nil {
+				return err
+			}
 
 			if matched {
-				fmt.Println(name)
+				fmt.Println(i, name)
 				err = readAccounts(store, dir+"/"+name)
 
-				if err != nil {return err}
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -62,7 +67,7 @@ func ReadDir(dir string, store *st.Store) error {
 
 	utils.PrintMemUsage()
 	var n int
-	for i:=0; i < NumFilterRequest; i++ {
+	for i := 0; i < NumFilterRequest; i++ {
 		n = store.FilterNum(st.Query{Sex: "f", StatusEq: "заняты"})
 	}
 
@@ -71,6 +76,8 @@ func ReadDir(dir string, store *st.Store) error {
 	utils.PrintMemUsage()
 	runtime.GC()
 	utils.PrintMemUsage()
+	//debug.FreeOSMemory()
+	//utils.PrintMemUsage()
 
 	return nil
 }
