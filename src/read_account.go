@@ -1,15 +1,14 @@
 package main
 
 import (
-	st "./store"
-	"./structures"
-	"./utils"
 	"encoding/json"
 	"fmt"
+	st "highload/store"
+	"highload/structures"
+	"highload/utils"
 	"io/ioutil"
 	"regexp"
 	"runtime"
-	"time"
 )
 
 const (
@@ -63,15 +62,15 @@ func ReadDir(dir string, store *st.Store) error {
 
 	store.PrintStat()
 
-	t := time.Now()
+	//t := time.Now()
 
-	utils.PrintMemUsage()
-	var n int
-	for i := 0; i < NumFilterRequest; i++ {
-		n = store.FilterNum(st.Query{Sex: "f", StatusEq: "заняты"})
-	}
+	//utils.PrintMemUsage()
+	//var n int
+	//for i := 0; i < NumFilterRequest; i++ {
+	//	n = store.FilterNum(&st.Query{Sex: "f", StatusEq: "заняты"})
+	//}
 
-	fmt.Println("Filter result:", n, ". Time: ", time.Now().Sub(t))
+	//fmt.Println("Filter result:", n, ". Time: ", time.Now().Sub(t))
 
 	utils.PrintMemUsage()
 	runtime.GC()

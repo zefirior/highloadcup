@@ -1,8 +1,9 @@
 package store
 
 import (
-	s "../structures"
 	"fmt"
+	"highload/query"
+	s "highload/structures"
 	"strings"
 )
 
@@ -73,106 +74,71 @@ func getInterests(store *Store, interests []string) (res []int16) {
 	return
 }
 
-type Query struct {
-	Sex string
+type fnameSetType map[string]struct{}
 
-	StatusEq  string
-	StatusNeq string
-
-	EmailLt  string
-	EmailGt  string
-	EmailDom string
-
-	FnameEq   string
-	FnameAny  string
-	FnameNull string
-
-	SnameEq     string
-	SnameStarts string
-	SnameNull   string
-
-	PhoneNull string
-
-	CountryNull string
-
-	CityNull string
-
-	PremiumNull string
+func parseFnameSet(set string) fnameSetType {
+	fnameSet := fnameSetType{}
+	for _, fname := range strings.Split(set, ",") {
+		fnameSet[fname] = struct{}{}
+	}
+	return fnameSet
 }
 
-func (store *Store) FilterNum(q Query) (n int) {
-	fnameSet := map[string]struct{}{}
-	if q.FnameAny != "" {
-		for _, fname := range strings.Split(q.FnameAny, ",") {
-			fnameSet[fname] = struct{}{}
-		}
-	}
+func (store *Store) FilterNum(q *query.Query) (n int) {
+	fnameSet := parseFnameSet(q.FnameAny)
 
 	for i := 0; i < store.AccOffset; i++ {
 		match := true
 		acc := store.Accounts[i]
 
-		if q.Sex != "" {
-			match = match && acc.Sex == s.SexIndex(q.Sex)
+		match = store.PropFilterSex(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.StatusEq != "" {
-			match = match && acc.Status == s.StatusIndex(q.StatusEq)
-		} else if q.StatusNeq != "" {
-			match = match && acc.Status != s.StatusIndex(q.StatusNeq)
+		match = store.PropFilterStatus(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.EmailGt != "" {
-			match = match && acc.Email < q.EmailGt
-		} else if q.EmailLt != "" {
-			match = match && acc.Email > q.EmailLt
-		} else if q.EmailDom != "" {
-			match = match && store.domains.Get(int(acc.Domain)) == q.EmailDom
+		match = store.PropFilterEmail(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.FnameEq != "" {
-			match = match && store.fname.Get(int(acc.Fname)) == q.FnameEq
-		} else if q.FnameAny != "" {
-			_, ok := fnameSet[store.fname.Get(int(acc.Fname))]
-			match = match && ok
-		} else if q.FnameNull == "1" {
-			match = match && acc.Fname == int16(store.fname.Insert(""))
-		} else if q.FnameNull == "0" {
-			match = match && acc.Fname != int16(store.fname.Insert(""))
+		match = store.PropFilterFname(match, q, acc, fnameSet)
+		if !match {
+			continue
 		}
 
-		if q.SnameEq != "" {
-			match = match && store.sname.Get(int(acc.Sname)) == q.SnameEq
-		} else if q.SnameStarts != "" {
-			match = match && strings.HasPrefix(store.sname.Get(int(acc.Sname)), q.SnameStarts)
-		} else if q.SnameNull == "1" {
-			match = match && acc.Sname == int16(store.sname.Insert(""))
-		} else if q.SnameNull == "0" {
-			match = match && acc.Sname != int16(store.sname.Insert(""))
+		match = store.PropFilterSname(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.PhoneNull == "1" {
-			match = match && acc.Phone == ""
-		} else if q.PhoneNull == "0" {
-			match = match && acc.Phone != ""
+		match = store.PropFilterPhone(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.CountryNull == "1" {
-			match = match && acc.Country == int16(store.country.Insert(""))
-		} else if q.CountryNull == "0" {
-			match = match && acc.Country != int16(store.country.Insert(""))
+		match = store.PropFilterCountry(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.CityNull == "1" {
-			match = match && acc.City == int16(store.city.Insert(""))
-		} else if q.CityNull == "0" {
-			match = match && acc.City != int16(store.city.Insert(""))
+		match = store.PropFilterCity(match, q, acc)
+		if !match {
+			continue
 		}
 
-		if q.PremiumNull == "1" {
-			match = match && acc.Premium == nil
-		} else if q.PremiumNull == "0" {
-			match = match && acc.Premium != nil
+		match = store.PropFilterBirth(match, q, acc)
+		if !match {
+			continue
+		}
+
+		match = store.PropFilterPremium(match, q, acc)
+		if !match {
+			continue
 		}
 
 		if match {

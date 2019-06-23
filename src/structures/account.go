@@ -58,11 +58,16 @@ func (acc *Account) Print() {
 	fmt.Println("    Premium: ", acc.Premium)
 }
 
+const (
+	SexF = "f"
+	SexM = "m"
+)
+
 func SexIndex(sex string) int8 {
 	switch sex {
-	case "f":
+	case SexF:
 		return 0
-	case "m":
+	case SexM:
 		return 1
 
 	default:
@@ -71,17 +76,23 @@ func SexIndex(sex string) int8 {
 }
 
 func SexValue(i int8) string {
-	sex := [2]string{"f", "m"}
+	sex := [2]string{SexF, SexM}
 	return sex[i]
 }
 
+const (
+	StatFree    = "свободны"
+	StatBusy    = "заняты"
+	StatComplex = "всё сложно"
+)
+
 func StatusIndex(status string) int8 {
 	switch status {
-	case "свободны":
+	case StatFree:
 		return 0
-	case "заняты":
+	case StatBusy:
 		return 1
-	case "всё сложно":
+	case StatComplex:
 		return 2
 
 	default:
@@ -90,6 +101,6 @@ func StatusIndex(status string) int8 {
 }
 
 func StatusValue(i int8) string {
-	sex := [3]string{"свободны", "заняты", "всё сложно"}
+	sex := [3]string{StatFree, StatBusy, StatComplex}
 	return sex[i]
 }

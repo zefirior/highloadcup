@@ -1,10 +1,12 @@
 package main
 
 import (
-	st "./store"
-	"./structures"
-	"./utils"
 	"fmt"
+	_ "highload/server"
+	st "highload/store"
+	"highload/structures"
+	"highload/utils"
+	"net/http"
 )
 
 const dir string = "./testdata/data"
@@ -31,4 +33,8 @@ func main() {
 	acc = store.Accounts[3]
 	acc.Print()
 
+	println("Server start")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		fmt.Println(err)
+	}
 }
